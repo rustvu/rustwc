@@ -9,7 +9,7 @@ use clap::Parser;
 
 /// Command line arguments
 #[derive(Debug, Parser)]
-#[command(author, version, about, long_about = None)]
+#[command(version, about, long_about = None)]
 struct Cli {
     /// Files to count
     #[arg(name = "FILE")]
@@ -39,13 +39,12 @@ struct FileInfo {
 impl FileInfo {
     /// Compute file information
     fn from_filename(filename: &Path) -> Result<Self> {
-        let file: Box<dyn BufRead> = if filename.as_os_str() == "-" {
+        let reader: Box<dyn BufRead> = if filename.as_os_str() == "-" {
             Box::new(BufReader::new(std::io::stdin()))
         } else {
             Box::new(BufReader::new(File::open(filename)?))
         };
 
-        let reader = std::io::BufReader::new(file);
         let mut lines = 0;
         let mut words = 0;
         let mut chars = 0;
